@@ -8,6 +8,7 @@ import type { Camper } from "@/app/api/get-camper/route"
 import { Button } from "@/components/ui/button"
 import { InteractiveGridPattern } from "@/components/ui/interactive-grid-pattern"
 import { TextReveal } from "@/components/ui/text-reveal"
+import { DreamWithComments } from "@/components/dream-with-comments"
 import { cn } from "@/lib/utils"
 
 type ViewState = "idle" | "loading" | "success" | "error"
@@ -195,11 +196,17 @@ export function CamperExperience() {
                 {`น้อง ${camper.name} มีความฝันแบบไหนกันนะ?`}
               </TextReveal>
 
-              <TextReveal>{camper.dream}</TextReveal>
+              <DreamWithComments
+                dream={camper.dream}
+                comments={camper.comments}
+              />
+              
 
               <TextReveal>
                 {`งั้นหรอ...? เป็นความฝันที่ดีจัง :)`}
               </TextReveal>
+
+              
 
               <footer className="py-16 text-center">
                 <p className="text-sm text-muted-foreground">JWC14</p>

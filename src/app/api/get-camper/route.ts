@@ -5,6 +5,7 @@ export interface Camper {
   name: string;
   camper_id: string;
   dream: string;
+  comments: string[];
 }
 
 export async function GET(request: NextRequest) {
