@@ -1,9 +1,10 @@
 "use client"
 
-import { useCallback, useEffect, useState, type FormEvent } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import { ChevronDown, Loader2 } from "lucide-react"
 
+import camperData from "@/app/api/get-camper/data.json"
 import type { Camper } from "@/app/api/get-camper/route"
 import { Button } from "@/components/ui/button"
 import { InteractiveGridPattern } from "@/components/ui/interactive-grid-pattern"
@@ -21,7 +22,7 @@ export function CamperExperience() {
   const [showScrollHint, setShowScrollHint] = useState(true)
 
   const handleSubmit = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
+    (event: { preventDefault(): void }) => {
       event.preventDefault()
       const trimmedId = camperId.trim()
       if (!trimmedId) {
@@ -30,32 +31,19 @@ export function CamperExperience() {
         return
       }
 
-      setViewState("loading")
-      setError(null)
+      const found = camperData.find(
+        (c) => c.camper_id.trim().toLowerCase() === trimmedId.toLowerCase()
+      ) as Camper | undefined
 
-      try {
-        const response = await fetch(
-          `/api/get-camper?id=${encodeURIComponent(trimmedId)}`
-        )
-        const data = await response.json()
-
-        if (!response.ok) {
-          setError(
-            data.error === "Camper not found"
-              ? "ไม่พบ Camper ID นี้ ลองตรวจสอบอีกครั้ง"
-              : "เกิดข้อผิดพลาด กรุณาลองใหม่"
-          )
-          setViewState("error")
-          return
-        }
-
-        setCamper(data as Camper)
-        setViewState("success")
-        window.scrollTo(0, 0)
-      } catch {
-        setError("ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่")
+      if (!found) {
+        setError("ไม่พบ Camper ID นี้ ลองตรวจสอบอีกครั้ง")
         setViewState("error")
+        return
       }
+
+      setCamper(found)
+      setViewState("success")
+      window.scrollTo(0, 0)
     },
     [camperId]
   )
